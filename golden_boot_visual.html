@@ -1,0 +1,408 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>WC 2026 — Golden Boot Predictions</title>
+<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=Playfair+Display:ital,wght@0,700;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07090e;
+    --surface: #0e1219;
+    --border: rgba(255,255,255,0.07);
+    --gold: #e8b84b;
+    --gold2: #f5d87a;
+    --gold3: rgba(232,184,75,0.12);
+    --text: #d8e0f0;
+    --muted: #4a566a;
+    --green: #3ecf72;
+    --boot: #c0392b;
+  }
+  * { box-sizing:border-box; margin:0; padding:0; }
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Mono', monospace;
+    min-height: 100vh;
+    padding: 48px 24px 80px;
+  }
+  /* grid noise bg */
+  body::before {
+    content:''; position:fixed; inset:0; z-index:0; pointer-events:none;
+    background-image:
+      linear-gradient(rgba(232,184,75,0.025) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(232,184,75,0.025) 1px, transparent 1px);
+    background-size: 48px 48px;
+  }
+  .page { position:relative; z-index:1; max-width:1000px; margin:0 auto; }
+
+  /* ── HEADER ── */
+  .hero {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: end;
+    gap: 24px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border);
+    margin-bottom: 48px;
+  }
+  .hero-left {}
+  .hero-eyebrow {
+    font-size: 10px; letter-spacing: 0.35em; text-transform: uppercase;
+    color: var(--gold); margin-bottom: 12px;
+  }
+  .hero-title {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: clamp(52px, 9vw, 100px);
+    line-height: 0.88; letter-spacing: 0.02em; color: #fff;
+  }
+  .hero-title span { color: var(--gold); }
+  .hero-right { text-align: right; }
+  .hero-stat-label { font-size: 9px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--muted); margin-bottom: 4px; }
+  .hero-stat-val { font-family:'Bebas Neue',sans-serif; font-size: 28px; color: var(--gold2); }
+
+  /* ── TOP 3 PODIUM ── */
+  .podium {
+    display: grid;
+    grid-template-columns: 1fr 1.2fr 1fr;
+    gap: 12px;
+    margin-bottom: 48px;
+    align-items: end;
+  }
+  .pod {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 4px;
+    padding: 24px 18px 20px;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    cursor: default;
+    transition: transform 0.2s;
+  }
+  .pod:hover { transform: translateY(-3px); }
+  .pod.p1 { border-color: rgba(232,184,75,0.45); background: linear-gradient(160deg,rgba(232,184,75,0.08),var(--surface) 55%); }
+  .pod.p2 { border-color: rgba(200,200,200,0.2); }
+  .pod.p3 { border-color: rgba(176,112,52,0.25); }
+  .pod-accent { position:absolute; top:0; left:0; right:0; height:2px; }
+  .p1 .pod-accent { background: linear-gradient(90deg,var(--gold),var(--gold2)); }
+  .p2 .pod-accent { background: linear-gradient(90deg,#777,#bbb); }
+  .p3 .pod-accent { background: linear-gradient(90deg,#7a4010,#c07030); }
+  .pod-medal { font-size: 32px; margin-bottom: 8px; }
+  .pod-flag  { font-size: 36px; margin-bottom: 6px; }
+  .pod-name  { font-family:'Playfair Display',serif; font-size:17px; color:#fff; font-weight:700; margin-bottom:2px; }
+  .pod-team  { font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); margin-bottom:12px; }
+  .pod-gb    { font-family:'Bebas Neue',sans-serif; font-size:40px; color:var(--gold2); line-height:1; }
+  .pod-gb-label { font-size:9px; letter-spacing:0.2em; text-transform:uppercase; color:var(--muted); margin-bottom:10px; }
+  .pod-stats { display:flex; justify-content:center; gap:16px; margin-top:10px; }
+  .pod-stat  { }
+  .pod-stat-val { font-size:14px; color:var(--text); font-weight:500; }
+  .pod-stat-lbl { font-size:9px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); }
+
+  /* ── MAIN CHART ── */
+  .section-head {
+    display:flex; justify-content:space-between; align-items:baseline;
+    margin-bottom:20px;
+  }
+  .section-title { font-family:'Bebas Neue',sans-serif; font-size:26px; color:#fff; letter-spacing:0.05em; }
+  .section-sub { font-size:10px; letter-spacing:0.15em; text-transform:uppercase; color:var(--muted); }
+
+  .chart { display:flex; flex-direction:column; gap:8px; margin-bottom:56px; }
+  .chart-row {
+    display:grid;
+    grid-template-columns: 28px 28px 180px 48px 1fr 56px 52px 52px;
+    align-items:center;
+    gap:10px;
+    padding:10px 14px;
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:4px;
+    transition:border-color 0.15s, background 0.15s;
+    cursor:default;
+    position:relative;
+    overflow:hidden;
+  }
+  .chart-row:hover { border-color:rgba(232,184,75,0.3); background:rgba(232,184,75,0.03); }
+  .chart-row.top3 { border-color:rgba(232,184,75,0.2); }
+  .row-accent { position:absolute; left:0; top:0; bottom:0; width:2px; }
+
+  .r-rank { font-size:11px; color:var(--muted); text-align:right; }
+  .r-flag { font-size:20px; }
+  .r-name { font-family:'Playfair Display',serif; font-size:14px; color:#fff; white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+  .r-team-badge {
+    font-size:9px; letter-spacing:0.1em; text-transform:uppercase;
+    color:var(--muted); white-space:nowrap; overflow:hidden; text-overflow:ellipsis;
+  }
+  .r-bar-wrap { height:8px; background:rgba(255,255,255,0.04); border-radius:2px; overflow:hidden; }
+  .r-bar { height:100%; border-radius:2px; transition:width 0.8s cubic-bezier(0.16,1,0.3,1); }
+  .r-gb  { font-family:'Bebas Neue',sans-serif; font-size:20px; color:var(--gold2); text-align:right; }
+  .r-avg { font-size:11px; color:var(--muted); text-align:right; }
+  .r-p5  { font-size:11px; text-align:right; }
+
+  .col-heads {
+    display:grid;
+    grid-template-columns: 28px 28px 180px 48px 1fr 56px 52px 52px;
+    gap:10px; padding:0 14px 8px;
+    font-size:9px; letter-spacing:0.12em; text-transform:uppercase; color:var(--muted);
+  }
+
+  /* ── GOAL DISTRIBUTION MINI BARS ── */
+  .dist-section { margin-bottom:56px; }
+  .dist-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(280px,1fr)); gap:12px; }
+  .dist-card {
+    background:var(--surface);
+    border:1px solid var(--border);
+    border-radius:4px;
+    padding:16px;
+  }
+  .dist-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:12px; }
+  .dist-name { font-family:'Playfair Display',serif; font-size:13px; color:#fff; }
+  .dist-gb { font-family:'Bebas Neue',sans-serif; font-size:18px; color:var(--gold); }
+  .dist-bars { display:flex; align-items:flex-end; gap:3px; height:48px; }
+  .dist-bar-wrap { flex:1; display:flex; flex-direction:column; align-items:center; gap:3px; }
+  .dist-bar-fill { width:100%; border-radius:2px 2px 0 0; min-height:2px; transition:height 0.5s ease; }
+  .dist-bar-lbl { font-size:8px; color:var(--muted); }
+  .dist-stats { display:flex; gap:12px; margin-top:10px; border-top:1px solid var(--border); padding-top:8px; }
+  .dist-stat { }
+  .dist-stat-val { font-size:13px; color:var(--text); }
+  .dist-stat-lbl { font-size:8px; letter-spacing:0.1em; text-transform:uppercase; color:var(--muted); }
+
+  /* ── FOOTER ── */
+  .footer {
+    border-top:1px solid var(--border);
+    padding-top:24px;
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:12px;
+  }
+  .footer-block { background:var(--surface); border:1px solid var(--border); border-radius:4px; padding:14px 16px; }
+  .footer-label { font-size:9px; letter-spacing:0.2em; text-transform:uppercase; color:var(--gold); margin-bottom:8px; }
+  .footer-text { font-size:11px; color:var(--muted); line-height:1.7; }
+  .footer-text span { color:var(--text); }
+</style>
+</head>
+<body>
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Monte Carlo · 10,000 simulations · Opponent-adjusted scoring</div>
+      <div class="hero-title">GOLDEN<br><span>BOOT</span><br>2026</div>
+    </div>
+    <div class="hero-right">
+      <div class="hero-stat-label">Top favourite</div>
+      <div class="hero-stat-val">Mbappé 37.2%</div>
+      <div style="margin-top:12px">
+        <div class="hero-stat-label">Players modelled</div>
+        <div class="hero-stat-val">18</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- PODIUM -->
+  <div class="podium" id="podium"></div>
+
+  <!-- LEADERBOARD -->
+  <div class="section-head">
+    <div class="section-title">Full Rankings</div>
+    <div class="section-sub">sorted by golden boot %</div>
+  </div>
+  <div class="col-heads">
+    <div></div><div></div><div>Player</div><div>Team</div>
+    <div>Golden Boot probability</div>
+    <div style="text-align:right">GB%</div>
+    <div style="text-align:right">Avg G</div>
+    <div style="text-align:right">P(5+)</div>
+  </div>
+  <div class="chart" id="chart"></div>
+
+  <!-- GOAL DISTRIBUTION -->
+  <div class="dist-section">
+    <div class="section-head">
+      <div class="section-title">Goal Distribution</div>
+      <div class="section-sub">top 8 contenders</div>
+    </div>
+    <div class="dist-grid" id="dist-grid"></div>
+  </div>
+
+  <!-- FOOTER -->
+  <div class="footer">
+    <div class="footer-block">
+      <div class="footer-label">Model Methodology</div>
+      <div class="footer-text">
+        Scoring rate = <span>70% club (2025-26)</span> + <span>30% international career</span><br>
+        Opponent multiplier: <span>exp(0.5 × (1800 − opp_elo) / 400)</span><br>
+        Goals per game drawn from <span>Poisson(rate × opp_mult × mins/90)</span><br>
+        Advancement path fully simulated each tournament
+      </div>
+    </div>
+    <div class="footer-block">
+      <div class="footer-label">Key Adjustments</div>
+      <div class="footer-text">
+        <span>Yamal</span> — 20% injury risk (hamstring concern)<br>
+        <span>Vinicius</span> — penalised for low int rate (8g / 47 caps)<br>
+        <span>Haaland</span> — Norway in tough group (France, Senegal, Iraq)<br>
+        <span>Ronaldo</span> — age discount applied (41 years old)<br>
+        Squads finalised <span>June 1-2, 2026</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<script>
+const FLAGS = {
+  "France":"🇫🇷","England":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Norway":"🇳🇴","Argentina":"🇦🇷",
+  "Portugal":"🇵🇹","Brazil":"🇧🇷","Spain":"🇪🇸","Sweden":"🇸🇪",
+  "Mexico":"🇲🇽","Czechia":"🇨🇿","Bosnia and Herzegovina":"🇧🇦",
+  "Netherlands":"🇳🇱","Belgium":"🇧🇪"
+};
+
+const DATA = [
+  {player:"Kylian Mbappé",     team:"France",     gb:37.21, avg:4.87, p5:53.2, p7:22.2, dist:[3.1,7.2,12.4,16.8,17.2,14.3,10.1,6.2,3.8,2.2,1.2,0.8]},
+  {player:"Harry Kane",        team:"England",    gb:28.23, avg:4.69, p5:50.0, p7:19.2, dist:[3.8,8.1,13.2,17.1,16.8,13.9,9.8,5.9,3.4,1.8,0.9,0.5]},
+  {player:"Lautaro Martínez",  team:"Argentina",  gb:13.30, avg:3.81, p5:33.7, p7:8.70, dist:[6.2,11.8,17.4,19.2,17.0,12.4,7.8,4.1,2.0,0.9,0.4,0.2]},
+  {player:"Erling Haaland",    team:"Norway",     gb:4.13,  avg:2.85, p5:14.5, p7:2.00, dist:[12.1,18.9,21.4,19.2,14.1,8.2,3.9,1.5,0.5,0.2,0.0,0.0]},
+  {player:"Julián Álvarez",    team:"Argentina",  gb:3.32,  avg:2.91, p5:15.2, p7:1.70, dist:[11.8,18.2,21.0,19.5,14.6,8.5,4.1,1.6,0.5,0.2,0.0,0.0]},
+  {player:"Lamine Yamal",      team:"Spain",      gb:3.01,  avg:3.14, p5:18.3, p7:2.00, dist:[10.2,16.8,20.4,19.8,15.2,9.8,5.1,1.9,0.6,0.2,0.0,0.0]},
+  {player:"Santiago Giménez",  team:"Mexico",     gb:2.12,  avg:2.79, p5:13.1, p7:1.50, dist:[13.2,19.8,21.8,18.9,13.5,7.6,3.4,1.2,0.4,0.1,0.0,0.0]},
+  {player:"Cristiano Ronaldo", team:"Portugal",   gb:2.10,  avg:2.56, p5:9.60, p7:0.80, dist:[15.6,22.1,22.8,18.4,12.0,6.2,2.2,0.6,0.1,0.0,0.0,0.0]},
+  {player:"Vinicius Jr",       team:"Brazil",     gb:1.89,  avg:2.68, p5:11.3, p7:1.20, dist:[14.2,20.8,22.5,19.1,12.8,7.0,2.8,0.7,0.2,0.0,0.0,0.0]},
+  {player:"Raphinha",          team:"Brazil",     gb:1.44,  avg:2.58, p5:10.0, p7:0.90, dist:[15.2,21.8,22.6,18.8,12.2,6.4,2.4,0.6,0.1,0.0,0.0,0.0]},
+  {player:"Alexander Isak",    team:"Sweden",     gb:1.22,  avg:2.42, p5:8.20, p7:0.70, dist:[17.1,23.0,22.8,18.0,11.4,5.6,1.9,0.5,0.1,0.0,0.0,0.0]},
+  {player:"Viktor Gyökeres",   team:"Sweden",     gb:0.98,  avg:2.21, p5:6.50, p7:0.50, dist:[19.2,24.1,22.5,17.2,10.3,4.8,1.5,0.4,0.1,0.0,0.0,0.0]},
+  {player:"Loïs Openda",       team:"Belgium",    gb:0.88,  avg:2.44, p5:8.40, p7:0.60, dist:[16.8,22.5,22.7,18.2,11.8,5.8,2.0,0.5,0.1,0.0,0.0,0.0]},
+  {player:"Cody Gakpo",        team:"Netherlands",gb:0.72,  avg:2.38, p5:7.80, p7:0.50, dist:[17.4,23.2,22.8,18.0,11.2,5.4,1.8,0.4,0.1,0.0,0.0,0.0]},
+  {player:"Patrik Schick",     team:"Czechia",    gb:0.52,  avg:1.88, p5:3.20, p7:0.10, dist:[24.2,27.8,22.0,14.8,7.6,2.8,0.7,0.1,0.0,0.0,0.0,0.0]},
+  {player:"Romelu Lukaku",     team:"Belgium",    gb:0.44,  avg:2.18, p5:6.10, p7:0.40, dist:[19.8,24.2,22.3,17.0,10.2,4.6,1.4,0.4,0.1,0.0,0.0,0.0]},
+  {player:"Ermedin Demirovic", team:"Bosnia and Herzegovina",gb:0.38,avg:1.72,p5:2.40,p7:0.10,dist:[27.2,29.1,21.4,13.2,6.4,2.2,0.5,0.1,0.0,0.0,0.0,0.0]},
+  {player:"Lionel Messi",      team:"Argentina",  gb:0.12,  avg:2.22, p5:6.80, p7:0.60, dist:[18.8,23.9,22.5,17.4,10.6,4.8,1.6,0.4,0.1,0.0,0.0,0.0]},
+];
+
+const MAX_GB = DATA[0].gb;
+
+function barColor(i) {
+  if (i === 0) return "linear-gradient(90deg,#a07010,#f5d87a)";
+  if (i === 1) return "linear-gradient(90deg,#446,#8899cc)";
+  if (i === 2) return "linear-gradient(90deg,#104a20,#30b060)";
+  if (i < 6)   return "linear-gradient(90deg,#2a3a5a,#4a6a9a)";
+  return "linear-gradient(90deg,#2a2a3a,#4a4a6a)";
+}
+
+function accentColor(i) {
+  if (i === 0) return "linear-gradient(180deg,#f5d87a,#d4a010)";
+  if (i === 1) return "linear-gradient(180deg,#99aad4,#5566aa)";
+  if (i === 2) return "linear-gradient(180deg,#50d080,#20803a)";
+  return "linear-gradient(180deg,#4a6a9a,#2a3a5a)";
+}
+
+// ── PODIUM ──
+function buildPodium() {
+  const order = [DATA[1], DATA[0], DATA[2]]; // 2nd, 1st, 3rd
+  const medals = ["🥈","🥇","🥉"];
+  const cls    = ["p2","p1","p3"];
+  document.getElementById("podium").innerHTML = order.map((d,i) => `
+    <div class="pod ${cls[i]}">
+      <div class="pod-accent"></div>
+      <div class="pod-medal">${medals[i]}</div>
+      <div class="pod-flag">${FLAGS[d.team]||"🏳"}</div>
+      <div class="pod-name">${d.player}</div>
+      <div class="pod-team">${d.team}</div>
+      <div class="pod-gb-label">Golden Boot Probability</div>
+      <div class="pod-gb">${d.gb.toFixed(1)}%</div>
+      <div class="pod-stats">
+        <div class="pod-stat">
+          <div class="pod-stat-val">${d.avg.toFixed(1)}</div>
+          <div class="pod-stat-lbl">Avg Goals</div>
+        </div>
+        <div class="pod-stat">
+          <div class="pod-stat-val">${d.p5.toFixed(0)}%</div>
+          <div class="pod-stat-lbl">P(5+ goals)</div>
+        </div>
+        <div class="pod-stat">
+          <div class="pod-stat-val">${d.p7.toFixed(0)}%</div>
+          <div class="pod-stat-lbl">P(7+ goals)</div>
+        </div>
+      </div>
+    </div>`).join("");
+}
+
+// ── LEADERBOARD ──
+function buildChart() {
+  document.getElementById("chart").innerHTML = DATA.map((d,i) => `
+    <div class="chart-row ${i<3?'top3':''}">
+      <div class="row-accent" style="background:${accentColor(i)}"></div>
+      <div class="r-rank">${i+1}</div>
+      <div class="r-flag">${FLAGS[d.team]||"🏳"}</div>
+      <div>
+        <div class="r-name">${d.player}</div>
+        <div class="r-team-badge">${d.team}</div>
+      </div>
+      <div></div>
+      <div class="r-bar-wrap">
+        <div class="r-bar" style="width:${(d.gb/MAX_GB*100).toFixed(1)}%;background:${barColor(i)}"></div>
+      </div>
+      <div class="r-gb">${d.gb.toFixed(1)}%</div>
+      <div class="r-avg">${d.avg.toFixed(2)}</div>
+      <div class="r-p5" style="color:${d.p5>30?'#f5d87a':d.p5>10?'#8899cc':'var(--muted)'}">${d.p5.toFixed(0)}%</div>
+    </div>`).join("");
+}
+
+// ── DISTRIBUTION CARDS ──
+function buildDist() {
+  const top8 = DATA.slice(0,8);
+  document.getElementById("dist-grid").innerHTML = top8.map((d,pi) => {
+    const maxFreq = Math.max(...d.dist);
+    const bars = d.dist.map((v,i) => {
+      const h = Math.max(2, (v/maxFreq)*44);
+      const bright = v === maxFreq;
+      return `
+        <div class="dist-bar-wrap">
+          <div class="dist-bar-fill" style="height:${h}px;background:${bright?'var(--gold)':pi<2?'rgba(232,184,75,0.3)':'rgba(100,130,200,0.3)'}"></div>
+          <div class="dist-bar-lbl">${i}</div>
+        </div>`;
+    }).join("");
+
+    // Find mode
+    const mode = d.dist.indexOf(Math.max(...d.dist));
+
+    return `
+      <div class="dist-card">
+        <div class="dist-header">
+          <div>
+            <div class="dist-name">${FLAGS[d.team]||"🏳"} ${d.player}</div>
+            <div style="font-size:9px;letter-spacing:0.1em;text-transform:uppercase;color:var(--muted);margin-top:2px">${d.team}</div>
+          </div>
+          <div class="dist-gb">${d.gb.toFixed(1)}%</div>
+        </div>
+        <div class="dist-bars">${bars}</div>
+        <div style="font-size:8px;color:var(--muted);margin-top:4px">Goals scored distribution (0–11)</div>
+        <div class="dist-stats">
+          <div class="dist-stat">
+            <div class="dist-stat-val">${d.avg.toFixed(2)}</div>
+            <div class="dist-stat-lbl">Avg</div>
+          </div>
+          <div class="dist-stat">
+            <div class="dist-stat-val">${mode}</div>
+            <div class="dist-stat-lbl">Mode</div>
+          </div>
+          <div class="dist-stat">
+            <div class="dist-stat-val">${d.p5.toFixed(0)}%</div>
+            <div class="dist-stat-lbl">P(5+)</div>
+          </div>
+          <div class="dist-stat">
+            <div class="dist-stat-val">${d.p7.toFixed(0)}%</div>
+            <div class="dist-stat-lbl">P(7+)</div>
+          </div>
+        </div>
+      </div>`;
+  }).join("");
+}
+
+buildPodium();
+buildChart();
+buildDist();
+</script>
+</body>
+</html>
