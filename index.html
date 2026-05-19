@@ -3,533 +3,98 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>WC 2026 — Charts</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=DM+Mono:wght@400;500&family=DM+Serif+Display&display=swap" rel="stylesheet">
+
+<title>World Cup Models</title>
+
 <style>
-  :root {
-    --bg: #05080f;
-    --surface: #0c1220;
-    --border: rgba(255,255,255,0.07);
-    --gold: #e8b84b;
-    --gold2: #f5d87a;
-    --text: #dde4f0;
-    --muted: #4a5570;
-    --red: #e05c3a;
-    --green: #3ab870;
-  }
-  * { box-sizing: border-box; margin: 0; padding: 0; }
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'DM Serif Display', Georgia, serif;
-    padding: 40px 24px 80px;
-  }
-  .page { max-width: 960px; margin: 0 auto; display: flex; flex-direction: column; gap: 64px; }
 
-  /* ── HEADER ── */
-  .page-header { text-align: center; padding-bottom: 16px; border-bottom: 1px solid var(--border); }
-  .page-header h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: clamp(48px, 8vw, 88px);
-    line-height: 0.9;
-    color: #fff;
-    letter-spacing: 0.03em;
-  }
-  .page-header h1 span { color: var(--gold); }
-  .page-header p {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    letter-spacing: 0.25em;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-top: 12px;
-  }
+body{
+    background:#08111f;
+    color:white;
+    font-family:Arial;
+    padding:50px;
+    max-width:1100px;
+    margin:auto;
+}
 
-  /* ── CHART SECTION ── */
-  .chart-section { display: flex; flex-direction: column; gap: 20px; }
-  .chart-title {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 30px;
-    letter-spacing: 0.05em;
-    color: #fff;
-    display: flex; align-items: baseline; gap: 12px;
-  }
-  .chart-title span {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    letter-spacing: 0.15em;
-    text-transform: uppercase;
-  }
-  .chart-box {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    padding: 32px 28px 28px;
-    position: relative;
-    overflow: hidden;
-  }
-  .chart-box::before {
-    content: '';
-    position: absolute; top: 0; left: 0; right: 0; height: 2px;
-    background: linear-gradient(90deg, var(--gold), transparent);
-  }
+h1{
+    font-size:60px;
+    color:#f5d76e;
+    margin-bottom:10px;
+}
 
-  /* ── CHAMPION BAR CHART ── */
-  .bar-chart { display: flex; flex-direction: column; gap: 14px; }
-  .bar-row { display: grid; grid-template-columns: 28px 160px 1fr 64px; align-items: center; gap: 14px; }
-  .bar-rank {
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    color: var(--muted);
-    text-align: right;
-  }
-  .bar-label { display: flex; align-items: center; gap: 8px; }
-  .bar-flag { font-size: 20px; }
-  .bar-team { font-size: 14px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-  .bar-track {
-    height: 28px;
-    background: rgba(255,255,255,0.04);
-    border-radius: 3px;
-    overflow: hidden;
-    position: relative;
-  }
-  .bar-fill {
-    height: 100%;
-    border-radius: 3px;
-    position: relative;
-    display: flex; align-items: center;
-    transition: width 1s cubic-bezier(0.16,1,0.3,1);
-  }
-  .bar-pct {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 22px;
-    color: var(--gold2);
-    text-align: right;
-  }
-  .bar-grid-line {
-    position: absolute; top: 0; bottom: 0; width: 1px;
-    background: rgba(255,255,255,0.06);
-  }
+.subtitle{
+    color:#999;
+    font-size:20px;
+    margin-bottom:50px;
+}
 
-  /* ── SEMIFINAL HORIZONTAL CHART ── */
-  .sf-chart { display: flex; flex-direction: column; gap: 10px; }
-  .sf-row { display: grid; grid-template-columns: 28px 28px 150px 1fr 52px; align-items: center; gap: 12px; }
-  .sf-rank { font-family: 'DM Mono', monospace; font-size: 11px; color: var(--muted); text-align: right; }
-  .sf-flag { font-size: 18px; }
-  .sf-team { font-size: 13px; color: var(--text); }
-  .sf-track {
-    height: 20px;
-    background: rgba(255,255,255,0.04);
-    border-radius: 2px;
-    overflow: hidden;
-  }
-  .sf-fill { height: 100%; border-radius: 2px; }
-  .sf-pct { font-family: 'DM Mono', monospace; font-size: 12px; color: var(--gold); text-align: right; }
-  .sf-divider {
-    height: 1px;
-    background: var(--border);
-    margin: 4px 0;
-    grid-column: 1/-1;
-  }
+.grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+    gap:20px;
+}
 
-  /* ── GROUP HEATMAPS ── */
-  .heatmap-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-    gap: 14px;
-  }
-  .hm-card {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 6px;
-    overflow: hidden;
-  }
-  .hm-header {
-    display: flex; justify-content: space-between; align-items: center;
-    padding: 10px 14px 8px;
-    border-bottom: 1px solid var(--border);
-    background: rgba(255,255,255,0.02);
-  }
-  .hm-letter {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 24px;
-    color: var(--gold);
-    line-height: 1;
-  }
-  .hm-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 9px;
-    color: var(--muted);
-    text-transform: uppercase;
-    letter-spacing: 0.12em;
-  }
-  .hm-row {
-    display: flex; align-items: center; gap: 8px;
-    padding: 0;
-    border-bottom: 1px solid rgba(255,255,255,0.03);
-  }
-  .hm-row:last-child { border-bottom: none; }
-  .hm-flag { font-size: 15px; padding: 8px 0 8px 12px; min-width: 36px; }
-  .hm-name { flex: 1; font-size: 11.5px; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding-right: 6px; }
-  .hm-cell {
-    width: 52px; height: 100%;
-    display: flex; align-items: center; justify-content: center;
-    font-family: 'DM Mono', monospace;
-    font-size: 11px;
-    font-weight: 500;
-    padding: 8px 6px;
-    flex-shrink: 0;
-  }
+.card{
+    background:#111827;
+    border:1px solid #253047;
+    border-radius:14px;
+    padding:24px;
+    transition:0.2s;
+}
 
-  /* ── FOOTER ── */
-  .page-footer {
-    border-top: 1px solid var(--border);
-    padding-top: 32px;
-    display: flex;
-    flex-direction: column;
-    gap: 20px;
-  }
-  .footer-block {
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 4px;
-    padding: 16px 20px;
-  }
-  .footer-block-label {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    letter-spacing: 0.2em;
-    text-transform: uppercase;
-    color: var(--gold);
-    margin-bottom: 10px;
-  }
-  .footer-block ul {
-    list-style: none;
-    display: flex;
-    flex-direction: column;
-    gap: 5px;
-  }
-  .footer-block ul li {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    color: var(--muted);
-    display: flex;
-    gap: 8px;
-  }
-  .footer-block ul li::before {
-    content: "—";
-    color: var(--border);
-  }
-  .footer-block p {
-    font-family: 'DM Mono', monospace;
-    font-size: 12px;
-    color: var(--muted);
-  }
-  .footer-block p span { color: var(--text); }
-  .footer-meta {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-  .footer-copy {
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-  }
+.card:hover{
+    transform:translateY(-3px);
+    border-color:#f5d76e;
+}
 
-  /* ── LEGEND ── */
-  .legend {
-    display: flex; align-items: center; gap: 20px;
-    font-family: 'DM Mono', monospace;
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 0.1em;
-    text-transform: uppercase;
-    margin-bottom: 4px;
-  }
-  .legend-swatch {
-    width: 28px; height: 10px; border-radius: 2px;
-  }
-  .legend-item { display: flex; align-items: center; gap: 6px; }
+.card a{
+    color:#f5d76e;
+    text-decoration:none;
+    font-size:24px;
+    font-weight:bold;
+}
+
+.card p{
+    color:#aaa;
+    margin-top:10px;
+    line-height:1.5;
+}
+
 </style>
 </head>
+
 <body>
-<div class="page">
 
-  <!-- HEADER -->
-  <div class="page-header">
-    <h1>WC <span>2026</span><br>PREDICTION CHARTS</h1>
-    <p>Monte Carlo · 10,000 simulations · Elo ratings via eloratings.net</p>
-  </div>
+<h1>World Cup Models</h1>
 
-  <!-- CHART 1: TOP 10 CHAMPION ODDS -->
-  <div class="chart-section">
-    <div class="chart-title">Top 10 Championship Odds <span>by champion %</span></div>
-    <div class="chart-box">
-      <div class="bar-chart" id="champion-chart"></div>
-    </div>
-  </div>
+<div class="subtitle">
+World Cup simulations, player projections, and tournament analytics.
+</div>
 
-  <!-- CHART 2: SEMIFINAL PROBABILITY -->
-  <div class="chart-section">
-    <div class="chart-title">Semifinal Probability <span>all teams with &gt;1%</span></div>
-    <div class="chart-box">
-      <div class="sf-chart" id="sf-chart"></div>
-    </div>
-  </div>
+<div class="grid">
 
-  <!-- CHART 3: GROUP WINNER HEATMAPS -->
-  <div class="chart-section">
-    <div class="chart-title">Group Winner Heatmap <span>win % per team</span></div>
-    <div style="display:flex;gap:16px;align-items:center;margin-bottom:8px;" class="legend">
-      <div class="legend-item">
-        <div class="legend-swatch" style="background:linear-gradient(90deg,rgba(15,40,15,0.5),rgba(40,180,80,0.7))"></div>
-        <span>High odds</span>
-      </div>
-      <div class="legend-item">
-        <div class="legend-swatch" style="background:rgba(232,184,75,0.3)"></div>
-        <span>Mid odds</span>
-      </div>
-      <div class="legend-item">
-        <div class="legend-swatch" style="background:rgba(255,255,255,0.04)"></div>
-        <span>Low odds</span>
-      </div>
-    </div>
-    <div class="heatmap-grid" id="heatmap-grid"></div>
-  </div>
+<div class="card">
+<a href="https://takizawadaiki.github.io/world-cup-prediction-model/">
+World Cup Prediction Model
+</a>
 
-  <!-- FOOTER -->
-  <div class="page-footer">
+<p>
+Monte Carlo simulations, Elo ratings, advancement probabilities, and tournament forecasting.
+</p>
+</div>
 
-    <div class="footer-block">
-      <div class="footer-block-label">Model Limitations</div>
-      <ul>
-        <li>injuries and roster changes are dynamic and not reflected in Elo ratings</li>
-        <li>probabilities are simulation-based estimates, not guaranteed outcomes</li>
-        <li>knockout-stage randomness may differ significantly from real tournament results</li>
-        <li>Elo ratings do not account for recent form, tactical setups, or home advantage</li>
-      </ul>
-    </div>
+<div class="card">
+<a href="golden_boot_visual.html">
+Golden Boot Prediction Model
+</a>
 
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;">
-      <div class="footer-block">
-        <div class="footer-block-label">Data Sources</div>
-        <p><span>World Football Elo Ratings</span> · eloratings.net<br>
-        <span>FBref</span> · player statistics<br>
-        <span>Historical World Cup data</span></p>
-      </div>
-      <div class="footer-block">
-        <div class="footer-block-label">Last Updated</div>
-        <p style="font-size:20px;font-family:'Bebas Neue',sans-serif;color:#fff;letter-spacing:0.05em" id="timestamp"></p>
-        <p style="margin-top:6px;">10,000 Monte Carlo simulations<br>Full 32-team bracket</p>
-      </div>
-    </div>
-
-    <div class="footer-meta">
-      <div class="footer-copy">WC 2026 PREDICTION MODEL</div>
-      <div class="footer-copy">RATINGS: ELORATINGS.NET · SIMULATION: ELO-BASED MONTE CARLO</div>
-    </div>
-
-  </div>
+<p>
+Player scoring projections, expected goals modeling, and Golden Boot probabilities.
+</p>
+</div>
 
 </div>
 
-<script>
-const FLAGS = {
-  "Mexico":"🇲🇽","South Korea":"🇰🇷","Czechia":"🇨🇿","South Africa":"🇿🇦",
-  "Switzerland":"🇨🇭","Canada":"🇨🇦","Qatar":"🇶🇦","Bosnia and Herzegovina":"🇧🇦",
-  "Brazil":"🇧🇷","Morocco":"🇲🇦","Scotland":"🏴󠁧󠁢󠁳󠁣󠁴󠁿","Haiti":"🇭🇹",
-  "USA":"🇺🇸","Turkiye":"🇹🇷","Paraguay":"🇵🇾","Australia":"🇦🇺",
-  "Germany":"🇩🇪","Ecuador":"🇪🇨","Ivory Coast":"🇨🇮","Curacao":"🇨🇼",
-  "Netherlands":"🇳🇱","Japan":"🇯🇵","Sweden":"🇸🇪","Tunisia":"🇹🇳",
-  "Belgium":"🇧🇪","Iran":"🇮🇷","Egypt":"🇪🇬","New Zealand":"🇳🇿",
-  "Spain":"🇪🇸","Uruguay":"🇺🇾","Saudi Arabia":"🇸🇦","Cape Verde":"🇨🇻",
-  "France":"🇫🇷","Senegal":"🇸🇳","Norway":"🇳🇴","Iraq":"🇮🇶",
-  "Argentina":"🇦🇷","Austria":"🇦🇹","Algeria":"🇩🇿","Jordan":"🇯🇴",
-  "Portugal":"🇵🇹","Colombia":"🇨🇴","Congo DR":"🇨🇩","Uzbekistan":"🇺🇿",
-  "England":"🏴󠁧󠁢󠁥󠁮󠁧󠁿","Croatia":"🇭🇷","Ghana":"🇬🇭","Panama":"🇵🇦"
-};
-
-const DATA = [
-  {team:"Mexico",group:"A",rating:1858,group_winner:76.9,advance_group:99.1,semifinal:13.42,champion:0.94},
-  {team:"South Korea",group:"A",rating:1752,group_winner:15.33,advance_group:93.05,semifinal:2.32,champion:0.03},
-  {team:"Czechia",group:"A",rating:1726,group_winner:7.64,advance_group:84.29,semifinal:2.12,champion:0.06},
-  {team:"South Africa",group:"A",rating:1524,group_winner:0.13,advance_group:4.77,semifinal:0.01,champion:0.0},
-  {team:"Switzerland",group:"B",rating:1889,group_winner:82.68,advance_group:99.75,semifinal:18.46,champion:1.71},
-  {team:"Canada",group:"B",rating:1784,group_winner:16.83,advance_group:97.97,semifinal:3.1,champion:0.21},
-  {team:"Qatar",group:"B",rating:1427,group_winner:0.07,advance_group:14.3,semifinal:0.01,champion:0.0},
-  {team:"Bosnia and Herzegovina",group:"B",rating:1594,group_winner:0.42,advance_group:47.26,semifinal:0.22,champion:0.0},
-  {team:"Brazil",group:"C",rating:1984,group_winner:85.19,advance_group:99.71,semifinal:33.81,champion:6.05},
-  {team:"Morocco",group:"C",rating:1821,group_winner:10.64,advance_group:95.06,semifinal:4.04,champion:0.27},
-  {team:"Scotland",group:"C",rating:1767,group_winner:4.15,advance_group:85.02,semifinal:3.12,champion:0.1},
-  {team:"Haiti",group:"C",rating:1532,group_winner:0.02,advance_group:1.77,semifinal:0.0,champion:0.0},
-  {team:"USA",group:"D",rating:1721,group_winner:18.51,advance_group:64.5,semifinal:1.62,champion:0.06},
-  {team:"Turkiye",group:"D",rating:1902,group_winner:58.45,advance_group:91.84,semifinal:14.89,champion:1.68},
-  {team:"Paraguay",group:"D",rating:1833,group_winner:17.51,advance_group:77.79,semifinal:4.55,champion:0.27},
-  {team:"Australia",group:"D",rating:1783,group_winner:5.53,advance_group:49.61,semifinal:1.9,champion:0.03},
-  {team:"Germany",group:"E",rating:1923,group_winner:52.34,advance_group:99.39,semifinal:12.05,champion:1.81},
-  {team:"Ecuador",group:"E",rating:1933,group_winner:47.11,advance_group:99.32,semifinal:13.64,champion:2.27},
-  {team:"Ivory Coast",group:"E",rating:1676,group_winner:0.55,advance_group:74.54,semifinal:0.96,champion:0.03},
-  {team:"Curacao",group:"E",rating:1436,group_winner:0.0,advance_group:1.17,semifinal:0.0,champion:0.0},
-  {team:"Netherlands",group:"F",rating:1961,group_winner:75.82,advance_group:99.54,semifinal:15.89,champion:3.78},
-  {team:"Japan",group:"F",rating:1904,group_winner:22.81,advance_group:97.52,semifinal:11.4,champion:1.24},
-  {team:"Sweden",group:"F",rating:1719,group_winner:1.31,advance_group:54.04,semifinal:0.85,champion:0.02},
-  {team:"Tunisia",group:"F",rating:1636,group_winner:0.06,advance_group:10.09,semifinal:0.03,champion:0.0},
-  {team:"Belgium",group:"G",rating:1866,group_winner:80.46,advance_group:99.09,semifinal:5.72,champion:0.69},
-  {team:"Iran",group:"G",rating:1760,group_winner:15.35,advance_group:92.22,semifinal:2.04,champion:0.09},
-  {team:"Egypt",group:"G",rating:1689,group_winner:4.03,advance_group:72.31,semifinal:0.61,champion:0.0},
-  {team:"New Zealand",group:"G",rating:1585,group_winner:0.16,advance_group:13.95,semifinal:0.03,champion:0.0},
-  {team:"Spain",group:"H",rating:2165,group_winner:97.08,advance_group:100.0,semifinal:62.78,champion:35.31},
-  {team:"Uruguay",group:"H",rating:1892,group_winner:2.92,advance_group:98.62,semifinal:13.41,champion:1.14},
-  {team:"Saudi Arabia",group:"H",rating:1568,group_winner:0.0,advance_group:20.0,semifinal:0.04,champion:0.0},
-  {team:"Cape Verde",group:"H",rating:1549,group_winner:0.0,advance_group:7.62,semifinal:0.0,champion:0.0},
-  {team:"France",group:"I",rating:2082,group_winner:86.46,advance_group:99.71,semifinal:28.82,champion:10.35},
-  {team:"Senegal",group:"I",rating:1879,group_winner:7.29,advance_group:92.14,semifinal:7.3,champion:0.7},
-  {team:"Norway",group:"I",rating:1912,group_winner:6.25,advance_group:91.17,semifinal:9.59,champion:1.14},
-  {team:"Iraq",group:"I",rating:1607,group_winner:0.0,advance_group:0.36,semifinal:0.0,champion:0.0},
-  {team:"Argentina",group:"J",rating:2113,group_winner:96.53,advance_group:99.95,semifinal:36.15,champion:15.19},
-  {team:"Austria",group:"J",rating:1827,group_winner:2.79,advance_group:88.0,semifinal:3.77,champion:0.24},
-  {team:"Algeria",group:"J",rating:1743,group_winner:0.54,advance_group:49.5,semifinal:0.68,champion:0.04},
-  {team:"Jordan",group:"J",rating:1690,group_winner:0.14,advance_group:18.59,semifinal:0.14,champion:0.0},
-  {team:"Portugal",group:"K",rating:1984,group_winner:71.1,advance_group:99.4,semifinal:17.41,champion:3.79},
-  {team:"Colombia",group:"K",rating:1975,group_winner:28.37,advance_group:98.81,semifinal:17.94,champion:3.25},
-  {team:"Congo DR",group:"K",rating:1655,group_winner:0.15,advance_group:22.55,semifinal:0.11,champion:0.0},
-  {team:"Uzbekistan",group:"K",rating:1727,group_winner:0.38,advance_group:25.81,semifinal:0.29,champion:0.0},
-  {team:"England",group:"L",rating:2020,group_winner:80.89,advance_group:99.82,semifinal:21.44,champion:5.76},
-  {team:"Croatia",group:"L",rating:1930,group_winner:18.4,advance_group:98.04,semifinal:12.67,champion:1.72},
-  {team:"Ghana",group:"L",rating:1505,group_winner:0.1,advance_group:9.94,semifinal:0.0,champion:0.0},
-  {team:"Panama",group:"L",rating:1737,group_winner:0.61,advance_group:61.0,semifinal:0.65,champion:0.03},
-];
-
-// ── BAR CHART COLORS ──
-function barGrad(i) {
-  const grads = [
-    "linear-gradient(90deg,#a07010,#f5d87a)",
-    "linear-gradient(90deg,#7a1515,#d04040)",
-    "linear-gradient(90deg,#104070,#3a90d0)",
-    "linear-gradient(90deg,#106030,#30b060)",
-    "linear-gradient(90deg,#502080,#9050d0)",
-    "linear-gradient(90deg,#805010,#d09030)",
-    "linear-gradient(90deg,#104060,#2080b0)",
-    "linear-gradient(90deg,#603010,#b06030)",
-    "linear-gradient(90deg,#107060,#20c090)",
-    "linear-gradient(90deg,#601020,#c03050)",
-  ];
-  return grads[i % grads.length];
-}
-
-// ── CHART 1: CHAMPION ODDS ──
-function buildChampionChart() {
-  const top10 = [...DATA].sort((a,b)=>b.champion-a.champion).slice(0,10);
-  const max = top10[0].champion;
-
-  const gridLines = [10,20,30].map(v => `
-    <div class="bar-grid-line" style="left:${v/max*100}%">
-      <div style="position:absolute;top:-18px;font-family:'DM Mono',monospace;font-size:9px;color:var(--muted);transform:translateX(-50%)">${v}%</div>
-    </div>`).join("");
-
-  document.getElementById("champion-chart").innerHTML = top10.map((t,i) => `
-    <div class="bar-row">
-      <div class="bar-rank">${i+1}</div>
-      <div class="bar-label">
-        <span class="bar-flag">${FLAGS[t.team]||"🏳"}</span>
-        <span class="bar-team">${t.team}</span>
-      </div>
-      <div class="bar-track">
-        ${gridLines}
-        <div class="bar-fill" style="width:${(t.champion/max*100).toFixed(1)}%;background:${barGrad(i)}"></div>
-      </div>
-      <div class="bar-pct">${t.champion.toFixed(1)}%</div>
-    </div>
-  `).join("");
-}
-
-// ── CHART 2: SEMIFINAL ──
-function buildSFChart() {
-  const sfTeams = [...DATA].filter(t=>t.semifinal>=1.0).sort((a,b)=>b.semifinal-a.semifinal);
-  const max = sfTeams[0].semifinal;
-
-  function sfColor(v) {
-    if (v >= 30) return "linear-gradient(90deg,#a07010,#f5d87a)";
-    if (v >= 15) return "linear-gradient(90deg,#104070,#3a90d0)";
-    if (v >= 8)  return "linear-gradient(90deg,#106030,#30b060)";
-    return "linear-gradient(90deg,#2a3a4a,#4a6a8a)";
-  }
-
-  // Group by conference tier for visual dividers
-  let html = "";
-  sfTeams.forEach((t,i) => {
-    html += `
-      <div class="sf-row">
-        <div class="sf-rank">${i+1}</div>
-        <div class="sf-flag">${FLAGS[t.team]||"🏳"}</div>
-        <div class="sf-team">${t.team}</div>
-        <div class="sf-track">
-          <div class="sf-fill" style="width:${(t.semifinal/max*100).toFixed(1)}%;background:${sfColor(t.semifinal)}"></div>
-        </div>
-        <div class="sf-pct">${t.semifinal.toFixed(1)}%</div>
-      </div>`;
-    // Divider after natural breaks
-    if (i === 2 || i === 5 || i === 9) {
-      html += `<div style="height:1px;background:var(--border);grid-column:1/-1;margin:2px 0;"></div>`;
-    }
-  });
-
-  document.getElementById("sf-chart").innerHTML = html;
-}
-
-// ── CHART 3: GROUP WINNER HEATMAPS ──
-function heatBg(val) {
-  if (val >= 80) return `rgba(30,160,70,0.55)`;
-  if (val >= 50) return `rgba(40,140,60,0.35)`;
-  if (val >= 20) return `rgba(232,184,75,0.25)`;
-  if (val >= 5)  return `rgba(232,184,75,0.1)`;
-  if (val >= 1)  return `rgba(255,255,255,0.05)`;
-  return `rgba(255,255,255,0.02)`;
-}
-function heatText(val) {
-  if (val >= 60) return "#fff";
-  if (val >= 20) return "#f5d87a";
-  if (val >= 5)  return "#a0b0c0";
-  return "var(--muted)";
-}
-
-function buildHeatmaps() {
-  const groups = [...new Set(DATA.map(t=>t.group))].sort();
-
-  document.getElementById("heatmap-grid").innerHTML = groups.map(g => {
-    const teams = DATA.filter(t=>t.group===g).sort((a,b)=>b.group_winner-a.group_winner);
-    const rows = teams.map(t => `
-      <div class="hm-row">
-        <div class="hm-flag">${FLAGS[t.team]||"🏳"}</div>
-        <div class="hm-name">${t.team}</div>
-        <div class="hm-cell" style="background:${heatBg(t.group_winner)};color:${heatText(t.group_winner)}">
-          ${t.group_winner > 0 ? t.group_winner.toFixed(1)+"%" : "—"}
-        </div>
-      </div>`).join("");
-
-    return `
-      <div class="hm-card">
-        <div class="hm-header">
-          <div class="hm-letter">${g}</div>
-          <div class="hm-label">Win %</div>
-        </div>
-        ${rows}
-      </div>`;
-  }).join("");
-}
-
-buildChampionChart();
-buildSFChart();
-buildHeatmaps();
-
-// Timestamp
-const now = new Date();
-document.getElementById("timestamp").textContent = now.toLocaleDateString("en-US", {month:"long", year:"numeric"});
-</script>
 </body>
 </html>
